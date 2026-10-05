@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCR Calculator - Benefit Cost Ratio App</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            touch-action: manipulation;
+        }
+        /* Custom focused state for active keypad input target */
+        .active-input {
+            border-color: #0284c7 !important;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.25) !important;
+        }
+        /* Tap effect for keypad buttons */
+        .key-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-3 sm:p-6">
+
+    <!-- App Container -->
+    <main class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+        
+        <!-- Header -->
+        <header class="bg-slate-950/80 border-b border-slate-800/80 px-5 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-lg">
+                    <i class="fa-solid fa-calculator"></i>
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-white leading-tight">BCR Calculator</h1>
+                    <p class="text-xs text-slate-400">Benefit-Cost Ratio Analysis</p>
+                </div>
+            </div>
+            <!-- Quick Reset Button -->
+            <button onclick="resetAll()" class="text-xs text-slate-400 hover:text-white px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-rotate-left"></i> Reset
+            </button>
+        </header>
+
+        <!-- Main Form & Content -->
+        <div class="p-5 space-y-4 flex-1">
+            
+            <!-- Target Field Selector Radio Group -->
+            <div class="bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800 grid grid-cols-2 gap-1">
+                <button type="button" id="targetBenefitBtn" onclick="setActiveTarget('benefit')"
+                    class="py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    <i class="fa-solid fa-circle-plus"></i> Total Benefit ($)
+                </button>
+                <button type="button" id="targetCostBtn" onclick="setActiveTarget('cost')"
+                    class="py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition text-slate-400 hover:text-slate-200">
+                    <i class="fa-solid fa-circle-minus"></i> Total Cost ($)
+                </button>
+            </div>
+
+            <!-- Input Cards -->
+            <div class="space-y-3">
+                
+                <!-- Benefit Input -->
+                <div onclick="setActiveTarget('benefit')" class="p-3.5 bg-slate-950/60 border border-slate-800 rounded-2xl cursor-pointer hover:border-slate-700 transition space-y-1">
+                    <div class="flex justify-between items-center text-xs">
+                        <label class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-hand-holding-dollar"></i> Expected Benefits
+                        </label>
+                        <span class="text-[10px] text-slate-500">Income / Savings</span>
+                    </div>
+                    <div class="relative flex items-center">
+                        <span class="absolute left-3 text-sm text-slate-500 font-bold">$</span>
+                        <input type="text" id="inputBenefit" value="1500" readonly
+                            class="w-full bg-slate-900 border border-slate-800 active-input rounded-xl pl-8 pr-3 py-2 text-base font-bold text-slate-100 focus:outline-none cursor-pointer">
+                    </div>
+                </div>
+
+                <!-- Cost Input -->
+                <div onclick="setActiveTarget('cost')" class="p-3.5 bg-slate-950/60 border border-slate-800 rounded-2xl cursor-pointer hover:border-slate-700 transition space-y-1">
+                    <div class="flex justify-between items-center text-xs">
+                        <label class="font-semibold text-rose-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-receipt"></i> Expected Costs
+                        </label>
+                        <span class="text-[10px] text-slate-500">Expenses / Overhead</span>
+                    </div>
+                    <div class="relative flex items-center">
+                        <span class="absolute left-3 text-sm text-slate-500 font-bold">$</span>
+                        <input type="text" id="inputCost" value="1000" readonly
+                            class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-base font-bold text-slate-100 focus:outline-none cursor-pointer">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prominent Calculate BCR Button -->
+            <button id="calculateBtn" onclick="calculateBCR()" 
+                class="w-full py-3 px-4 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-2xl shadow-lg shadow-sky-600/20 active:scale-[0.98] transition flex items-center justify-center gap-2 text-sm">
+                <i class="fa-solid fa-calculator"></i>
+                <span>Calculate BCR</span>
+            </button>
+
+            <!-- Results Display Section -->
+            <div id="resultCard" class="hidden bg-slate-950 border border-slate-800 p-4 rounded-2xl space-y-3">
+                
+                <!-- Status Badge -->
+                <div class="flex justify-between items-center">
+                    <span id="decisionBadge" class="text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Status
+                    </span>
+                    <span class="text-[10px] text-slate-500 font-mono">BCR = Benefit / Cost</span>
+                </div>
+
+                <!-- Main BCR Value -->
+                <div class="flex items-baseline justify-between border-b border-slate-800/80 pb-3">
+                    <div>
+                        <span class="text-[11px] text-slate-400 block font-medium">Calculated BCR</span>
+                        <span id="bcrResult" class="text-3xl font-black text-white">0.00</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[11px] text-slate-400 block font-medium">Net Value</span>
+                        <span id="netResult" class="text-base font-bold text-slate-200">$0.00</span>
+                    </div>
+                </div>
+
+                <!-- Formula Breakdown Explanation -->
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs space-y-1.5">
+                    <p class="text-slate-400 font-semibold flex justify-between">
+                        <span>Formula Breakdown:</span>
+                        <span id="formulaText" class="font-mono text-sky-400">$1,500 / $1,000</span>
+                    </p>
+                    <p id="decisionExplanation" class="text-slate-300 text-[11px] leading-relaxed">
+                        Explanation output...
+                    </p>
+                </div>
+            </div>
+
+            <!-- Onscreen Touch Keypad -->
+            <div class="bg-slate-950/90 border border-slate-800/80 p-3 rounded-2xl space-y-2">
+                <div class="flex justify-between items-center px-1">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Touch Keypad</span>
+                    <span id="activeFieldLabel" class="text-[10px] font-medium text-sky-400">Editing: Benefit ($)</span>
+                </div>
+                <div class="grid grid-cols-3 gap-1.5">
+                    <button type="button" onclick="pressKey('1')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">1</button>
+                    <button type="button" onclick="pressKey('2')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">2</button>
+                    <button type="button" onclick="pressKey('3')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">3</button>
+                    <button type="button" onclick="pressKey('4')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">4</button>
+                    <button type="button" onclick="pressKey('5')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">5</button>
+                    <button type="button" onclick="pressKey('6')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">6</button>
+                    <button type="button" onclick="pressKey('7')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">7</button>
+                    <button type="button" onclick="pressKey('8')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">8</button>
+                    <button type="button" onclick="pressKey('9')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">9</button>
+                    <button type="button" onclick="pressKey('.')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold text-base rounded-xl transition">.</button>
+                    <button type="button" onclick="pressKey('0')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">0</button>
+                    <button type="button" onclick="pressBackspace()" class="key-btn py-2.5 bg-slate-800 hover:bg-slate-700 text-rose-400 font-bold text-sm rounded-xl transition flex items-center justify-center">
+                        <i class="fa-solid fa-backspace"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        let currentTarget = 'benefit'; // 'benefit' or 'cost'
+
+        // Set Active Field Target for Onscreen Keypad
+        function setActiveTarget(target) {
+            currentTarget = target;
+            const benefitInput = document.getElementById('inputBenefit');
+            const costInput = document.getElementById('inputCost');
+
+            const benefitBtn = document.getElementById('targetBenefitBtn');
+            const costBtn = document.getElementById('targetCostBtn');
+
+            const activeLabel = document.getElementById('activeFieldLabel');
+
+            if (target === 'benefit') {
+                benefitInput.classList.add('active-input');
+                costInput.classList.remove('active-input');
+
+                benefitBtn.className = "py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                costBtn.className = "py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition text-slate-400 hover:text-slate-200";
+
+                activeLabel.innerText = "Editing: Benefit ($)";
+                activeLabel.className = "text-[10px] font-medium text-emerald-400";
+            } else {
+                costInput.classList.add('active-input');
+                benefitInput.classList.remove('active-input');
+
+                costBtn.className = "py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition bg-rose-500/20 text-rose-400 border border-rose-500/30";
+                benefitBtn.className = "py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition text-slate-400 hover:text-slate-200";
+
+                activeLabel.innerText = "Editing: Cost ($)";
+                activeLabel.className = "text-[10px] font-medium text-rose-400";
+            }
+        }
+
+        // Keypad key press handler
+        function pressKey(key) {
+            const inputEl = document.getElementById(currentTarget === 'benefit' ? 'inputBenefit' : 'inputCost');
+            let val = inputEl.value;
+
+            // Prevent multiple decimals
+            if (key === '.' && val.includes('.')) return;
+
+            if (val === '0' && key !== '.') {
+                val = key;
+            } else {
+                val += key;
+            }
+
+            inputEl.value = val;
+        }
+
+        // Backspace key handler
+        function pressBackspace() {
+            const inputEl = document.getElementById(currentTarget === 'benefit' ? 'inputBenefit' : 'inputCost');
+            let val = inputEl.value;
+
+            if (val.length <= 1) {
+                val = '0';
+            } else {
+                val = val.slice(0, -1);
+            }
+
+            inputEl.value = val;
+        }
+
+        // Reset all inputs
+        function resetAll() {
+            document.getElementById('inputBenefit').value = '0';
+            document.getElementById('inputCost').value = '0';
+            document.getElementById('resultCard').classList.add('hidden');
+            setActiveTarget('benefit');
+        }
+
+        // Calculate BCR Function
+        function calculateBCR() {
+            const benefit = parseFloat(document.getElementById('inputBenefit').value) || 0;
+            const cost = parseFloat(document.getElementById('inputCost').value) || 0;
+
+            const resultCard = document.getElementById('resultCard');
+            const badge = document.getElementById('decisionBadge');
+            const bcrResult = document.getElementById('bcrResult');
+            const netResult = document.getElementById('netResult');
+            const formulaText = document.getElementById('formulaText');
+            const explanation = document.getElementById('decisionExplanation');
+
+            if (cost <= 0) {
+                alert("Cost must be greater than zero to calculate Benefit-Cost Ratio.");
+                return;
+            }
+
+            const bcr = benefit / cost;
+            const netValue = benefit - cost;
+
+            // Format monetary values
+            const formattedBenefit = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(benefit);
+            const formattedCost = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(cost);
+            const formattedNet = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(netValue);
+
+            // Display Values
+            bcrResult.innerText = bcr.toFixed(2);
+            netResult.innerText = formattedNet;
+            formulaText.innerText = `${formattedBenefit} / ${formattedCost}`;
+
+            // Decision rule logic
+            if (bcr > 1.0001) {
+                badge.innerText = "Profitable / Net Benefit (BCR > 1)";
+                badge.className = "text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wide bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                bcrResult.className = "text-3xl font-black text-emerald-400";
+                explanation.innerHTML = `<strong>Outcome:</strong> Recommended! For every <strong>$1.00</strong> spent, you receive <strong>$${bcr.toFixed(2)}</strong> in return (Net gain of <strong>${formattedNet}</strong>).`;
+            } else if (Math.abs(bcr - 1.0) <= 0.0001) {
+                badge.innerText = "Break-Even / Neutral (BCR = 1)";
+                badge.className = "text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wide bg-amber-500/20 text-amber-400 border border-amber-500/30";
+                bcrResult.className = "text-3xl font-black text-amber-400";
+                explanation.innerHTML = `<strong>Outcome:</strong> Neutral / Break-even. Expected benefits exactly equal total costs (Net value of <strong>${formattedNet}</strong>).`;
+            } else {
+                badge.innerText = "Not Profitable / Net Loss (BCR < 1)";
+                badge.className = "text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wide bg-rose-500/20 text-rose-400 border border-rose-500/30";
+                bcrResult.className = "text-3xl font-black text-rose-400";
+                explanation.innerHTML = `<strong>Outcome:</strong> Not recommended. Costs exceed benefits. You lose money with a net loss of <strong>${formattedNet}</strong>.`;
+            }
+
+            resultCard.classList.remove('hidden');
+        }
+
+        // Initialize active field on page load
+        window.onload = function() {
+            setActiveTarget('benefit');
+            calculateBCR();
+        }
+    </script>
+</body>
+</html>
