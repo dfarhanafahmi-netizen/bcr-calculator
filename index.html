@@ -3,26 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BCR Calculator - Benefit Cost Ratio App</title>
+    <title>Apprenticeship Benefit-Cost Ratio Calculator</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0f9ff',
-                            500: '#0284c7',
-                            600: '#0369a1',
-                            700: '#075985',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -30,391 +13,382 @@
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             touch-action: manipulation;
         }
-        /* Custom focused state for active input target */
-        .active-input {
-            border-color: #0284c7 !important;
-            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.25) !important;
+        .yellow-card {
+            background-color: #fef08a;
+            color: #854d0e;
+            border: 2px solid #eab308;
         }
-        /* Tap effect for keypad buttons */
-        .key-btn:active {
-            transform: scale(0.95);
+        .white-card {
+            background-color: #ffffff;
+            color: #0f172a;
+            border: 2px solid #cbd5e1;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-3 sm:p-6">
+<body class="bg-slate-950 text-slate-100 min-h-screen p-3 sm:p-6 flex flex-col items-center">
 
-    <!-- App Container -->
-    <main class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+    <!-- Main Container -->
+    <main class="w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
         
         <!-- Header -->
-        <header class="bg-slate-950/80 border-b border-slate-800/80 px-5 py-4 flex items-center justify-between">
+        <header class="bg-slate-950 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-lg">
+                <div class="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-lg">
                     <i class="fa-solid fa-calculator"></i>
                 </div>
                 <div>
-                    <h1 class="text-base font-bold text-white leading-tight">BCR Calculator</h1>
-                    <p class="text-xs text-slate-400">Benefit-Cost Ratio Analysis</p>
+                    <h1 class="text-base font-bold text-white">Apprenticeship Benefit-Cost Analysis</h1>
+                    <p class="text-xs text-slate-400">VET Training Cost-Benefit Model (RM)</p>
                 </div>
             </div>
-            <!-- Quick Reset Button -->
-            <button onclick="resetAll()" class="text-xs text-slate-400 hover:text-white px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 transition flex items-center gap-1.5">
+            <button onclick="resetAll()" class="text-xs text-slate-400 hover:text-white px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 transition flex items-center gap-1.5">
                 <i class="fa-solid fa-rotate-left"></i> Reset
             </button>
         </header>
 
-        <!-- Main Form & Content -->
-        <div class="p-5 space-y-4 flex-1">
-            
-            <!-- Target Field Selector Radio Group -->
-            <div class="bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800 grid grid-cols-2 gap-1">
-                <button type="button" id="targetBenefitBtn" onclick="setActiveTarget('benefit')"
-                    class="py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                    <i class="fa-solid fa-circle-plus"></i> Total Benefit ($)
-                </button>
-                <button type="button" id="targetCostBtn" onclick="setActiveTarget('cost')"
-                    class="py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition text-slate-400 hover:text-slate-200">
-                    <i class="fa-solid fa-circle-minus"></i> Total Cost ($)
-                </button>
-            </div>
+        <!-- Body Content -->
+        <div class="p-4 sm:p-6 space-y-6">
 
             <!-- Error Banner -->
             <div id="errorAlert" class="hidden p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 text-xs flex items-center gap-2">
                 <i class="fa-solid fa-triangle-exclamation text-sm"></i>
-                <span id="errorMessage">Invalid input detected. Please check your numbers.</span>
+                <span id="errorMessage">Invalid input detected. Alphabets and special symbols are blocked.</span>
             </div>
 
-            <!-- Input Cards -->
-            <div class="space-y-3">
-                
-                <!-- Benefit Input -->
-                <div onclick="setActiveTarget('benefit')" class="p-3.5 bg-slate-950/60 border border-slate-800 rounded-2xl cursor-pointer hover:border-slate-700 transition space-y-1">
-                    <div class="flex justify-between items-center text-xs">
-                        <label class="font-semibold text-emerald-400 flex items-center gap-1.5">
-                            <i class="fa-solid fa-hand-holding-dollar"></i> Expected Benefits
-                        </label>
-                        <span class="text-[10px] text-slate-500">Income / Savings</span>
-                    </div>
-                    <div class="relative flex items-center">
-                        <span class="absolute left-3 text-sm text-slate-500 font-bold">$</span>
-                        <input type="text" id="inputBenefit" value="1500" inputmode="decimal"
-                            onfocus="setActiveTarget('benefit')"
-                            onkeydown="filterKeyPress(event, 'benefit')"
-                            oninput="sanitizeInput(this)"
-                            class="w-full bg-slate-900 border border-slate-800 active-input rounded-xl pl-8 pr-3 py-2 text-base font-bold text-slate-100 focus:outline-none">
-                    </div>
-                </div>
-
-                <!-- Cost Input -->
-                <div onclick="setActiveTarget('cost')" class="p-3.5 bg-slate-950/60 border border-slate-800 rounded-2xl cursor-pointer hover:border-slate-700 transition space-y-1">
-                    <div class="flex justify-between items-center text-xs">
-                        <label class="font-semibold text-rose-400 flex items-center gap-1.5">
-                            <i class="fa-solid fa-receipt"></i> Expected Costs
-                        </label>
-                        <span class="text-[10px] text-slate-500">Expenses / Overhead</span>
-                    </div>
-                    <div class="relative flex items-center">
-                        <span class="absolute left-3 text-sm text-slate-500 font-bold">$</span>
-                        <input type="text" id="inputCost" value="1000" inputmode="decimal"
-                            onfocus="setActiveTarget('cost')"
-                            onkeydown="filterKeyPress(event, 'cost')"
-                            oninput="sanitizeInput(this)"
-                            class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-base font-bold text-slate-100 focus:outline-none">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Prominent Calculate BCR Button -->
-            <button id="calculateBtn" onclick="calculateBCR()" 
-                class="w-full py-3 px-4 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-2xl shadow-lg shadow-sky-600/20 active:scale-[0.98] transition flex items-center justify-center gap-2 text-sm">
-                <i class="fa-solid fa-calculator"></i>
-                <span>Calculate BCR</span>
-            </button>
-
-            <!-- Results Display Section -->
-            <div id="resultCard" class="hidden bg-slate-950 border border-slate-800 p-4 rounded-2xl space-y-3">
-                
-                <!-- Status Badge -->
-                <div class="flex justify-between items-center">
-                    <span id="decisionBadge" class="text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wide">
-                        Status
-                    </span>
-                    <span class="text-[10px] text-slate-500 font-mono">BCR = Benefit / Cost</span>
-                </div>
-
-                <!-- Main BCR Value -->
-                <div class="flex items-baseline justify-between border-b border-slate-800/80 pb-3">
+            <!-- SECTION 1: BENEFIT CALCULATION -->
+            <section class="space-y-3 bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
+                <div class="border-b border-slate-800 pb-2 flex justify-between items-center">
                     <div>
-                        <span class="text-[11px] text-slate-400 block font-medium">Calculated BCR</span>
-                        <span id="bcrResult" class="text-3xl font-black text-white">0.00</span>
+                        <h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-plus"></i> 1. Benefit Formula
+                        </h2>
+                        <p class="text-[11px] text-slate-400 italic">How much a firm can save on wage payment by having apprentices perform tasks</p>
                     </div>
-                    <div class="text-right">
-                        <span class="text-[11px] text-slate-400 block font-medium">Net Value</span>
-                        <span id="netResult" class="text-base font-bold text-slate-200">$0.00</span>
+                    <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                        RM <span id="benefitDisplay">0.00</span>
+                    </span>
+                </div>
+
+                <!-- Formula Layout Grid 1: Skilled Tasks -->
+                <div class="space-y-2">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">A. Skilled Tasks Work Value</span>
+                    <div class="grid grid-cols-2 sm:grid-cols-7 gap-2 items-center text-center text-xs font-bold">
+                        <!-- hW -->
+                        <div class="yellow-card p-2 rounded-xl flex flex-col justify-between">
+                            <span class="text-[10px] opacity-80">Hours worked (h<sup>W</sup>)</span>
+                            <input type="text" id="hW_1" value="120" inputmode="decimal" placeholder="0"
+                                onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
+                                class="w-full text-center bg-white/80 text-slate-900 rounded border border-yellow-500 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        </div>
+                        <span class="text-slate-500 hidden sm:block">×</span>
+                        <!-- alpha -->
+                        <div class="yellow-card p-2 rounded-xl flex flex-col justify-between">
+                            <span class="text-[10px] opacity-80">Time fraction (α)</span>
+                            <input type="text" id="alpha" value="0.5" inputmode="decimal" placeholder="0"
+                                onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
+                                class="w-full text-center bg-white/80 text-slate-900 rounded border border-yellow-500 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        </div>
+                        <span class="text-slate-500 hidden sm:block">×</span>
+                        <!-- ws -->
+                        <div class="white-card p-2 rounded-xl flex flex-col justify-between">
+                            <span class="text-[10px] text-slate-600">Skilled wage (w<sub>s</sub>)</span>
+                            <input type="text" id="ws_1" value="25" inputmode="decimal" placeholder="0"
+                                onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
+                                class="w-full text-center bg-slate-100 text-slate-900 rounded border border-slate-300 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        </div>
+                        <span class="text-slate-500 hidden sm:block">×</span>
+                        <!-- gamma -->
+                        <div class="yellow-card p-2 rounded-xl flex flex-col justify-between">
+                            <span class="text-[10px] opacity-80">Productivity (γ)</span>
+                            <input type="text" id="gamma" value="0.7" inputmode="decimal" placeholder="0"
+                                onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
+                                class="w-full text-center bg-white/80 text-slate-900 rounded border border-yellow-500 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        </div>
                     </div>
                 </div>
 
-                <!-- Formula Breakdown Explanation -->
-                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs space-y-1.5">
-                    <p class="text-slate-400 font-semibold flex justify-between">
-                        <span>Formula Breakdown:</span>
-                        <span id="formulaText" class="font-mono text-sky-400">$1,500 / $1,000</span>
+                <div class="text-center font-bold text-slate-500 text-sm">+</div>
+
+                <!-- Formula Layout Grid 2: Unskilled Tasks -->
+                <div class="space-y-2">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">B. Unskilled Tasks Work Value</span>
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 items-center text-center text-xs font-bold">
+                        <!-- hW -->
+                        <div class="yellow-card p-2 rounded-xl flex flex-col justify-between">
+                            <span class="text-[10px] opacity-80">Hours worked (h<sup>W</sup>)</span>
+                            <input type="text" id="hW_2" value="120" inputmode="decimal" placeholder="0"
+                                onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
+                                class="w-full text-center bg-white/80 text-slate-900 rounded border border-yellow-500 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        </div>
+                        <span class="text-slate-500 hidden sm:block">×</span>
+                        <!-- beta -->
+                        <div class="yellow-card p-2 rounded-xl flex flex-col justify-between">
+                            <span class="text-[10px] opacity-80">Time fraction (β)</span>
+                            <input type="text" id="beta" value="0.3" inputmode="decimal" placeholder="0"
+                                onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
+                                class="w-full text-center bg-white/80 text-slate-900 rounded border border-yellow-500 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        </div>
+                        <span class="text-slate-500 hidden sm:block">×</span>
+                        <!-- wu -->
+                        <div class="white-card p-2 rounded-xl flex flex-col justify-between">
+                            <span class="text-[10px] text-slate-600">Unskilled wage (w<sub>u</sub>)</span>
+                            <input type="text" id="wu" value="10" inputmode="decimal" placeholder="0"
+                                onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
+                                class="w-full text-center bg-slate-100 text-slate-900 rounded border border-slate-300 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="calculateBenefit()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-calculator"></i> Calculate Total Benefit
+                </button>
+            </section>
+
+            <!-- SECTION 2: COST CALCULATION -->
+            <section class="space-y-3 bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
+                <div class="border-b border-slate-800 pb-2 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-sm font-bold text-rose-400 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-minus"></i> 2. Cost Formula
+                        </h2>
+                        <p class="text-[11px] text-slate-400 italic">How much a firm needs to spend for having apprentices at work</p>
+                    </div>
+                    <span class="text-xs font-bold text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-lg border border-rose-500/20">
+                        RM <span id="costDisplay">0.00</span>
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-2 items-center text-center text-xs font-bold">
+                    <!-- wE -->
+                    <div class="yellow-card p-2 rounded-xl flex flex-col justify-between">
+                        <span class="text-[10px] opacity-80">Apprentice wage (w<sub>E</sub>)</span>
+                        <input type="text" id="wE" value="1200" inputmode="decimal" placeholder="0"
+                            onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
+                            class="w-full text-center bg-white/80 text-slate-900 rounded border border-yellow-500 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                    </div>
+
+                    <span class="text-slate-500 text-sm font-bold">+</span>
+
+                    <!-- (hT x ws) -->
+                    <div class="border-2 border-slate-700 p-2 rounded-xl bg-slate-900 grid grid-cols-3 gap-1 items-center">
+                        <div class="yellow-card p-1.5 rounded-lg">
+                            <span class="text-[9px] opacity-80 block">Hours (h<sup>T</sup>)</span>
+                            <input type="text" id="hT" value="20" inputmode="decimal" placeholder="0"
+                                onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
+                                class="w-full text-center bg-white/80 text-slate-900 rounded font-bold py-0.5 mt-0.5 text-[11px] focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        </div>
+                        <span class="text-slate-400 text-xs">×</span>
+                        <div class="white-card p-1.5 rounded-lg">
+                            <span class="text-[9px] text-slate-600 block">Wage (w<sub>s</sub>)</span>
+                            <input type="text" id="ws_2" value="25" inputmode="decimal" placeholder="0"
+                                onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
+                                class="w-full text-center bg-slate-100 text-slate-900 rounded font-bold py-0.5 mt-0.5 text-[11px] focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <span class="text-slate-500 text-sm font-bold">+</span>
+
+                    <!-- c -->
+                    <div class="yellow-card p-2 rounded-xl flex flex-col justify-between">
+                        <span class="text-[10px] opacity-80">Other training cost (c)</span>
+                        <input type="text" id="cCost" value="300" inputmode="decimal" placeholder="0"
+                            onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
+                            class="w-full text-center bg-white/80 text-slate-900 rounded border border-yellow-500 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <button onclick="calculateCost()" class="w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-calculator"></i> Calculate Total Cost
+                </button>
+            </section>
+
+            <!-- SECTION 3: FINAL BENEFIT / COST RATIO -->
+            <section class="bg-slate-950 p-5 rounded-2xl border border-sky-500/30 space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <div>
+                        <h2 class="text-base font-bold text-sky-400">3. Final Benefit-Cost Ratio (BCR)</h2>
+                        <p class="text-xs text-slate-400">Formula: BCR = Total Benefit (RM) / Total Cost (RM)</p>
+                    </div>
+                    <span id="decisionBadge" class="text-xs font-bold px-3 py-1 rounded-full uppercase bg-slate-800 text-slate-400">
+                        Pending
+                    </span>
+                </div>
+
+                <button onclick="calculateFinalBCR()" class="w-full py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-sky-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-chart-line"></i> Calculate Benefit / Cost Ratio
+                </button>
+
+                <div id="resultsCard" class="hidden bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="p-2 bg-slate-950 rounded-lg">
+                            <span class="text-[10px] text-slate-400 block">Total Benefit</span>
+                            <span id="resBenefit" class="text-xs font-bold text-emerald-400">RM 0.00</span>
+                        </div>
+                        <div class="p-2 bg-slate-950 rounded-lg">
+                            <span class="text-[10px] text-slate-400 block">Total Cost</span>
+                            <span id="resCost" class="text-xs font-bold text-rose-400">RM 0.00</span>
+                        </div>
+                        <div class="p-2 bg-slate-950 rounded-lg">
+                            <span class="text-[10px] text-slate-400 block">Calculated BCR</span>
+                            <span id="resBCR" class="text-base font-black text-sky-400">0.00</span>
+                        </div>
+                    </div>
+                    <p id="resExplanation" class="text-xs text-slate-300 leading-relaxed bg-slate-950/60 p-3 rounded-lg border border-slate-800">
+                        Explanation...
                     </p>
-                    <p id="decisionExplanation" class="text-slate-300 text-[11px] leading-relaxed">
-                        Explanation output...
-                    </p>
                 </div>
-            </div>
-
-            <!-- Onscreen Touch Keypad -->
-            <div class="bg-slate-950/90 border border-slate-800/80 p-3 rounded-2xl space-y-2">
-                <div class="flex justify-between items-center px-1">
-                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Touch Keypad</span>
-                    <span id="activeFieldLabel" class="text-[10px] font-medium text-sky-400">Editing: Benefit ($)</span>
-                </div>
-                <div class="grid grid-cols-4 gap-1.5">
-                    <button type="button" onclick="pressKey('1')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">1</button>
-                    <button type="button" onclick="pressKey('2')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">2</button>
-                    <button type="button" onclick="pressKey('3')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">3</button>
-                    <button type="button" onclick="pressKey('toggleSign')" class="key-btn py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold text-sm rounded-xl transition">+/-</button>
-
-                    <button type="button" onclick="pressKey('4')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">4</button>
-                    <button type="button" onclick="pressKey('5')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">5</button>
-                    <button type="button" onclick="pressKey('6')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">6</button>
-                    <button type="button" onclick="pressKey('.')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold text-base rounded-xl transition">.</button>
-
-                    <button type="button" onclick="pressKey('7')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">7</button>
-                    <button type="button" onclick="pressKey('8')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">8</button>
-                    <button type="button" onclick="pressKey('9')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">9</button>
-                    <button type="button" onclick="pressBackspace()" class="key-btn py-2.5 bg-slate-800 hover:bg-slate-700 text-rose-400 font-bold text-sm rounded-xl transition flex items-center justify-center">
-                        <i class="fa-solid fa-backspace"></i>
-                    </button>
-
-                    <button type="button" onclick="pressKey('0')" class="key-btn col-span-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">0</button>
-                </div>
-            </div>
+            </section>
 
         </div>
     </main>
 
     <script>
-        let currentTarget = 'benefit'; // 'benefit' or 'cost'
-
         function clearError() {
-            const errorAlert = document.getElementById('errorAlert');
-            errorAlert.classList.add('hidden');
+            document.getElementById('errorAlert').classList.add('hidden');
         }
 
         function showError(msg) {
-            const errorAlert = document.getElementById('errorAlert');
-            const errorMessage = document.getElementById('errorMessage');
-            errorMessage.innerText = msg;
-            errorAlert.classList.remove('hidden');
+            document.getElementById('errorMessage').innerText = msg;
+            document.getElementById('errorAlert').classList.remove('hidden');
         }
 
-        // Set Active Field Target for Inputs & Keypad
-        function setActiveTarget(target) {
-            currentTarget = target;
+        // Keystroke filtering to block alphabets and enforce numeric/negative keyboard access
+        function filterKeyPress(e) {
             clearError();
-
-            const benefitInput = document.getElementById('inputBenefit');
-            const costInput = document.getElementById('inputCost');
-
-            const benefitBtn = document.getElementById('targetBenefitBtn');
-            const costBtn = document.getElementById('targetCostBtn');
-
-            const activeLabel = document.getElementById('activeFieldLabel');
-
-            if (target === 'benefit') {
-                benefitInput.classList.add('active-input');
-                costInput.classList.remove('active-input');
-
-                benefitBtn.className = "py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
-                costBtn.className = "py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition text-slate-400 hover:text-slate-200";
-
-                activeLabel.innerText = "Editing: Benefit ($)";
-                activeLabel.className = "text-[10px] font-medium text-emerald-400";
-            } else {
-                costInput.classList.add('active-input');
-                benefitInput.classList.remove('active-input');
-
-                costBtn.className = "py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition bg-rose-500/20 text-rose-400 border border-rose-500/30";
-                benefitBtn.className = "py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition text-slate-400 hover:text-slate-200";
-
-                activeLabel.innerText = "Editing: Cost ($)";
-                activeLabel.className = "text-[10px] font-medium text-rose-400";
-            }
-        }
-
-        // Filter out alphabets and symbols from physical keyboard typing
-        function filterKeyPress(e, field) {
-            clearError();
-            
-            // Allow control keys (Backspace, Tab, Delete, Arrow keys, Enter)
-            const allowedControlKeys = ['Backspace', 'Tab', 'Delete', 'ArrowLeft', 'ArrowRight', 'Enter'];
-            if (allowedControlKeys.includes(e.key)) {
+            const allowedControl = ['Backspace', 'Tab', 'Delete', 'ArrowLeft', 'ArrowRight', 'Enter'];
+            if (allowedControl.includes(e.key)) {
                 if (e.key === 'Enter') {
-                    calculateBCR();
+                    calculateFinalBCR();
                 }
                 return;
             }
 
             // Allow digits 0-9
-            if (/^[0-9]$/.test(e.key)) {
-                return;
-            }
+            if (/^[0-9]$/.test(e.key)) return;
 
-            // Allow decimal point only if not already present
-            const inputEl = e.target;
-            if (e.key === '.' && !inputEl.value.includes('.')) {
-                return;
-            }
+            // Allow single decimal point
+            if (e.key === '.' && !e.target.value.includes('.')) return;
 
-            // Allow minus sign (-) only at position 0 if not already present
-            if (e.key === '-' && !inputEl.value.includes('-') && inputEl.selectionStart === 0) {
-                return;
-            }
+            // Allow negative sign (-) at the start
+            if (e.key === '-' && !e.target.value.includes('-') && e.target.selectionStart === 0) return;
 
-            // Block all other keys (alphabets, special characters)
+            // Block alphabets & non-numeric special characters
             e.preventDefault();
-            showError("Alphabetic letters and special characters are not allowed.");
+            showError("Alphabetic characters and special symbols are blocked.");
         }
 
-        // Clean any invalid pasted content
-        function sanitizeInput(inputEl) {
+        // Sanitize pasted or typed content
+        function sanitizeInput(el) {
             clearError();
-            let val = inputEl.value;
+            let val = el.value;
+            let isNeg = val.startsWith('-');
             
-            // Retain negative sign at start, digits, and first decimal point
-            let isNegative = val.startsWith('-');
+            // Retain numbers and decimals
             val = val.replace(/[^0-9.]/g, '');
-            
             const parts = val.split('.');
-            if (parts.length > 2) {
-                val = parts[0] + '.' + parts.slice(1).join('');
-            }
+            if (parts.length > 2) val = parts[0] + '.' + parts.slice(1).join('');
             
-            inputEl.value = (isNegative ? '-' : '') + val;
+            el.value = (isNeg ? '-' : '') + val;
         }
 
-        // Keypad button press handler
-        function pressKey(key) {
-            clearError();
-            const inputEl = document.getElementById(currentTarget === 'benefit' ? 'inputBenefit' : 'inputCost');
-            let val = inputEl.value;
+        function getVal(id) {
+            return parseFloat(document.getElementById(id).value) || 0;
+        }
 
-            if (key === 'toggleSign') {
-                if (val.startsWith('-')) {
-                    val = val.substring(1);
-                } else {
-                    val = '-' + (val === '0' ? '' : val);
-                }
-                inputEl.value = val === '' ? '0' : val;
+        function calculateBenefit() {
+            clearError();
+            const hW_1 = getVal('hW_1');
+            const alpha = getVal('alpha');
+            const ws_1 = getVal('ws_1');
+            const gamma = getVal('gamma');
+
+            const hW_2 = getVal('hW_2');
+            const beta = getVal('beta');
+            const wu = getVal('wu');
+
+            const skilledVal = hW_1 * alpha * ws_1 * gamma;
+            const unskilledVal = hW_2 * beta * wu;
+            const totalBenefit = skilledVal + unskilledVal;
+
+            document.getElementById('benefitDisplay').innerText = totalBenefit.toFixed(2);
+            return totalBenefit;
+        }
+
+        function calculateCost() {
+            clearError();
+            const wE = getVal('wE');
+            const hT = getVal('hT');
+            const ws_2 = getVal('ws_2');
+            const cCost = getVal('cCost');
+
+            const trainingLaborCost = hT * ws_2;
+            const totalCost = wE + trainingLaborCost + cCost;
+
+            document.getElementById('costDisplay').innerText = totalCost.toFixed(2);
+            return totalCost;
+        }
+
+        function calculateFinalBCR() {
+            const benefit = calculateBenefit();
+            const cost = calculateCost();
+
+            if (cost <= 0) {
+                showError("Total Cost must be greater than RM 0.00 to calculate Benefit-Cost Ratio.");
                 return;
             }
-
-            // Prevent multiple decimals
-            if (key === '.' && val.includes('.')) return;
-
-            if (val === '0' && key !== '.') {
-                val = key;
-            } else if (val === '-0' && key !== '.') {
-                val = '-' + key;
-            } else {
-                val += key;
-            }
-
-            inputEl.value = val;
-        }
-
-        // Backspace key handler for touch keypad
-        function pressBackspace() {
-            clearError();
-            const inputEl = document.getElementById(currentTarget === 'benefit' ? 'inputBenefit' : 'inputCost');
-            let val = inputEl.value;
-
-            if (val.length <= 1 || (val.length === 2 && val.startsWith('-'))) {
-                val = '0';
-            } else {
-                val = val.slice(0, -1);
-            }
-
-            inputEl.value = val;
-        }
-
-        // Reset all inputs
-        function resetAll() {
-            clearError();
-            document.getElementById('inputBenefit').value = '0';
-            document.getElementById('inputCost').value = '0';
-            document.getElementById('resultCard').classList.add('hidden');
-            setActiveTarget('benefit');
-        }
-
-        // Calculate BCR Function
-        function calculateBCR() {
-            clearError();
-            const benefitVal = document.getElementById('inputBenefit').value;
-            const costVal = document.getElementById('inputCost').value;
-
-            const benefit = parseFloat(benefitVal);
-            const cost = parseFloat(costVal);
-
-            if (isNaN(benefit) || isNaN(cost)) {
-                showError("Please enter valid numeric values for Benefit and Cost.");
-                return;
-            }
-
-            if (cost === 0) {
-                showError("Cost cannot be zero. Benefit-Cost Ratio requires a non-zero denominator.");
-                return;
-            }
-
-            const resultCard = document.getElementById('resultCard');
-            const badge = document.getElementById('decisionBadge');
-            const bcrResult = document.getElementById('bcrResult');
-            const netResult = document.getElementById('netResult');
-            const formulaText = document.getElementById('formulaText');
-            const explanation = document.getElementById('decisionExplanation');
 
             const bcr = benefit / cost;
-            const netValue = benefit - cost;
+            const netVal = benefit - cost;
 
-            // Format monetary values
-            const formattedBenefit = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(benefit);
-            const formattedCost = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(cost);
-            const formattedNet = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(netValue);
+            const resCard = document.getElementById('resultsCard');
+            const badge = document.getElementById('decisionBadge');
 
-            // Display Values
-            bcrResult.innerText = bcr.toFixed(2);
-            netResult.innerText = formattedNet;
-            formulaText.innerText = `${formattedBenefit} / ${formattedCost}`;
+            document.getElementById('resBenefit').innerText = `RM ${benefit.toFixed(2)}`;
+            document.getElementById('resCost').innerText = `RM ${cost.toFixed(2)}`;
+            document.getElementById('resBCR').innerText = bcr.toFixed(2);
 
-            // Decision rule logic
+            const fmtNet = `RM ${Math.abs(netVal).toFixed(2)}`;
+
             if (bcr > 1.0001) {
-                badge.innerText = "Profitable / Net Benefit (BCR > 1)";
-                badge.className = "text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wide bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
-                bcrResult.className = "text-3xl font-black text-emerald-400";
-                explanation.innerHTML = `<strong>Outcome:</strong> Recommended! For every <strong>$1.00</strong> spent, you receive <strong>$${bcr.toFixed(2)}</strong> in return (Net gain of <strong>${formattedNet}</strong>).`;
+                badge.innerText = "Net Benefit (BCR > 1)";
+                badge.className = "text-xs font-bold px-3 py-1 rounded-full uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                document.getElementById('resExplanation').innerHTML = `<strong>Profitable!</strong> For every <strong>RM 1.00</strong> spent, the firm gains <strong>RM ${bcr.toFixed(2)}</strong> in value. Net return: <strong class="text-emerald-400">+${fmtNet}</strong>.`;
             } else if (Math.abs(bcr - 1.0) <= 0.0001) {
-                badge.innerText = "Break-Even / Neutral (BCR = 1)";
-                badge.className = "text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wide bg-amber-500/20 text-amber-400 border border-amber-500/30";
-                bcrResult.className = "text-3xl font-black text-amber-400";
-                explanation.innerHTML = `<strong>Outcome:</strong> Neutral / Break-even. Expected benefits exactly equal total costs (Net value of <strong>${formattedNet}</strong>).`;
+                badge.innerText = "Break-Even (BCR = 1)";
+                badge.className = "text-xs font-bold px-3 py-1 rounded-full uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30";
+                document.getElementById('resExplanation').innerHTML = `<strong>Break-Even.</strong> Total benefits generated equal total expenditure (Net value: <strong>RM 0.00</strong>).`;
             } else {
-                badge.innerText = "Not Profitable / Net Loss (BCR < 1)";
-                badge.className = "text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wide bg-rose-500/20 text-rose-400 border border-rose-500/30";
-                bcrResult.className = "text-3xl font-black text-rose-400";
-                explanation.innerHTML = `<strong>Outcome:</strong> Not recommended. Costs exceed benefits. You lose money with a net loss of <strong>${formattedNet}</strong>.`;
+                badge.innerText = "Net Loss (BCR < 1)";
+                badge.className = "text-xs font-bold px-3 py-1 rounded-full uppercase bg-rose-500/20 text-rose-400 border border-rose-500/30";
+                document.getElementById('resExplanation').innerHTML = `<strong>Net Investment / Loss.</strong> Costs exceed work value by <strong class="text-rose-400">-${fmtNet}</strong>.`;
             }
 
-            resultCard.classList.remove('hidden');
+            resCard.classList.remove('hidden');
         }
 
-        // Initialize active field on page load
+        function resetAll() {
+            clearError();
+            document.getElementById('hW_1').value = '120';
+            document.getElementById('alpha').value = '0.5';
+            document.getElementById('ws_1').value = '25';
+            document.getElementById('gamma').value = '0.7';
+
+            document.getElementById('hW_2').value = '120';
+            document.getElementById('beta').value = '0.3';
+            document.getElementById('wu').value = '10';
+
+            document.getElementById('wE').value = '1200';
+            document.getElementById('hT').value = '20';
+            document.getElementById('ws_2').value = '25';
+            document.getElementById('cCost').value = '300';
+
+            document.getElementById('benefitDisplay').innerText = '0.00';
+            document.getElementById('costDisplay').innerText = '0.00';
+            document.getElementById('resultsCard').classList.add('hidden');
+        }
+
         window.onload = function() {
-            setActiveTarget('benefit');
-            calculateBCR();
+            calculateFinalBCR();
         }
     </script>
 </body>
