@@ -30,7 +30,7 @@
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             touch-action: manipulation;
         }
-        /* Custom focused state for active keypad input target */
+        /* Custom focused state for active input target */
         .active-input {
             border-color: #0284c7 !important;
             box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.25) !important;
@@ -78,6 +78,12 @@
                 </button>
             </div>
 
+            <!-- Error Banner -->
+            <div id="errorAlert" class="hidden p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 text-xs flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation text-sm"></i>
+                <span id="errorMessage">Invalid input detected. Please check your numbers.</span>
+            </div>
+
             <!-- Input Cards -->
             <div class="space-y-3">
                 
@@ -91,8 +97,11 @@
                     </div>
                     <div class="relative flex items-center">
                         <span class="absolute left-3 text-sm text-slate-500 font-bold">$</span>
-                        <input type="text" id="inputBenefit" value="1500" readonly
-                            class="w-full bg-slate-900 border border-slate-800 active-input rounded-xl pl-8 pr-3 py-2 text-base font-bold text-slate-100 focus:outline-none cursor-pointer">
+                        <input type="text" id="inputBenefit" value="1500" inputmode="decimal"
+                            onfocus="setActiveTarget('benefit')"
+                            onkeydown="filterKeyPress(event, 'benefit')"
+                            oninput="sanitizeInput(this)"
+                            class="w-full bg-slate-900 border border-slate-800 active-input rounded-xl pl-8 pr-3 py-2 text-base font-bold text-slate-100 focus:outline-none">
                     </div>
                 </div>
 
@@ -106,8 +115,11 @@
                     </div>
                     <div class="relative flex items-center">
                         <span class="absolute left-3 text-sm text-slate-500 font-bold">$</span>
-                        <input type="text" id="inputCost" value="1000" readonly
-                            class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-base font-bold text-slate-100 focus:outline-none cursor-pointer">
+                        <input type="text" id="inputCost" value="1000" inputmode="decimal"
+                            onfocus="setActiveTarget('cost')"
+                            onkeydown="filterKeyPress(event, 'cost')"
+                            oninput="sanitizeInput(this)"
+                            class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-base font-bold text-slate-100 focus:outline-none">
                     </div>
                 </div>
             </div>
@@ -160,21 +172,25 @@
                     <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Touch Keypad</span>
                     <span id="activeFieldLabel" class="text-[10px] font-medium text-sky-400">Editing: Benefit ($)</span>
                 </div>
-                <div class="grid grid-cols-3 gap-1.5">
+                <div class="grid grid-cols-4 gap-1.5">
                     <button type="button" onclick="pressKey('1')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">1</button>
                     <button type="button" onclick="pressKey('2')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">2</button>
                     <button type="button" onclick="pressKey('3')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">3</button>
+                    <button type="button" onclick="pressKey('toggleSign')" class="key-btn py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold text-sm rounded-xl transition">+/-</button>
+
                     <button type="button" onclick="pressKey('4')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">4</button>
                     <button type="button" onclick="pressKey('5')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">5</button>
                     <button type="button" onclick="pressKey('6')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">6</button>
+                    <button type="button" onclick="pressKey('.')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold text-base rounded-xl transition">.</button>
+
                     <button type="button" onclick="pressKey('7')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">7</button>
                     <button type="button" onclick="pressKey('8')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">8</button>
                     <button type="button" onclick="pressKey('9')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">9</button>
-                    <button type="button" onclick="pressKey('.')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold text-base rounded-xl transition">.</button>
-                    <button type="button" onclick="pressKey('0')" class="key-btn py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">0</button>
                     <button type="button" onclick="pressBackspace()" class="key-btn py-2.5 bg-slate-800 hover:bg-slate-700 text-rose-400 font-bold text-sm rounded-xl transition flex items-center justify-center">
                         <i class="fa-solid fa-backspace"></i>
                     </button>
+
+                    <button type="button" onclick="pressKey('0')" class="key-btn col-span-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-semibold text-base rounded-xl transition">0</button>
                 </div>
             </div>
 
@@ -184,9 +200,23 @@
     <script>
         let currentTarget = 'benefit'; // 'benefit' or 'cost'
 
-        // Set Active Field Target for Onscreen Keypad
+        function clearError() {
+            const errorAlert = document.getElementById('errorAlert');
+            errorAlert.classList.add('hidden');
+        }
+
+        function showError(msg) {
+            const errorAlert = document.getElementById('errorAlert');
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.innerText = msg;
+            errorAlert.classList.remove('hidden');
+        }
+
+        // Set Active Field Target for Inputs & Keypad
         function setActiveTarget(target) {
             currentTarget = target;
+            clearError();
+
             const benefitInput = document.getElementById('inputBenefit');
             const costInput = document.getElementById('inputCost');
 
@@ -216,16 +246,80 @@
             }
         }
 
-        // Keypad key press handler
+        // Filter out alphabets and symbols from physical keyboard typing
+        function filterKeyPress(e, field) {
+            clearError();
+            
+            // Allow control keys (Backspace, Tab, Delete, Arrow keys, Enter)
+            const allowedControlKeys = ['Backspace', 'Tab', 'Delete', 'ArrowLeft', 'ArrowRight', 'Enter'];
+            if (allowedControlKeys.includes(e.key)) {
+                if (e.key === 'Enter') {
+                    calculateBCR();
+                }
+                return;
+            }
+
+            // Allow digits 0-9
+            if (/^[0-9]$/.test(e.key)) {
+                return;
+            }
+
+            // Allow decimal point only if not already present
+            const inputEl = e.target;
+            if (e.key === '.' && !inputEl.value.includes('.')) {
+                return;
+            }
+
+            // Allow minus sign (-) only at position 0 if not already present
+            if (e.key === '-' && !inputEl.value.includes('-') && inputEl.selectionStart === 0) {
+                return;
+            }
+
+            // Block all other keys (alphabets, special characters)
+            e.preventDefault();
+            showError("Alphabetic letters and special characters are not allowed.");
+        }
+
+        // Clean any invalid pasted content
+        function sanitizeInput(inputEl) {
+            clearError();
+            let val = inputEl.value;
+            
+            // Retain negative sign at start, digits, and first decimal point
+            let isNegative = val.startsWith('-');
+            val = val.replace(/[^0-9.]/g, '');
+            
+            const parts = val.split('.');
+            if (parts.length > 2) {
+                val = parts[0] + '.' + parts.slice(1).join('');
+            }
+            
+            inputEl.value = (isNegative ? '-' : '') + val;
+        }
+
+        // Keypad button press handler
         function pressKey(key) {
+            clearError();
             const inputEl = document.getElementById(currentTarget === 'benefit' ? 'inputBenefit' : 'inputCost');
             let val = inputEl.value;
+
+            if (key === 'toggleSign') {
+                if (val.startsWith('-')) {
+                    val = val.substring(1);
+                } else {
+                    val = '-' + (val === '0' ? '' : val);
+                }
+                inputEl.value = val === '' ? '0' : val;
+                return;
+            }
 
             // Prevent multiple decimals
             if (key === '.' && val.includes('.')) return;
 
             if (val === '0' && key !== '.') {
                 val = key;
+            } else if (val === '-0' && key !== '.') {
+                val = '-' + key;
             } else {
                 val += key;
             }
@@ -233,12 +327,13 @@
             inputEl.value = val;
         }
 
-        // Backspace key handler
+        // Backspace key handler for touch keypad
         function pressBackspace() {
+            clearError();
             const inputEl = document.getElementById(currentTarget === 'benefit' ? 'inputBenefit' : 'inputCost');
             let val = inputEl.value;
 
-            if (val.length <= 1) {
+            if (val.length <= 1 || (val.length === 2 && val.startsWith('-'))) {
                 val = '0';
             } else {
                 val = val.slice(0, -1);
@@ -249,6 +344,7 @@
 
         // Reset all inputs
         function resetAll() {
+            clearError();
             document.getElementById('inputBenefit').value = '0';
             document.getElementById('inputCost').value = '0';
             document.getElementById('resultCard').classList.add('hidden');
@@ -257,8 +353,22 @@
 
         // Calculate BCR Function
         function calculateBCR() {
-            const benefit = parseFloat(document.getElementById('inputBenefit').value) || 0;
-            const cost = parseFloat(document.getElementById('inputCost').value) || 0;
+            clearError();
+            const benefitVal = document.getElementById('inputBenefit').value;
+            const costVal = document.getElementById('inputCost').value;
+
+            const benefit = parseFloat(benefitVal);
+            const cost = parseFloat(costVal);
+
+            if (isNaN(benefit) || isNaN(cost)) {
+                showError("Please enter valid numeric values for Benefit and Cost.");
+                return;
+            }
+
+            if (cost === 0) {
+                showError("Cost cannot be zero. Benefit-Cost Ratio requires a non-zero denominator.");
+                return;
+            }
 
             const resultCard = document.getElementById('resultCard');
             const badge = document.getElementById('decisionBadge');
@@ -266,11 +376,6 @@
             const netResult = document.getElementById('netResult');
             const formulaText = document.getElementById('formulaText');
             const explanation = document.getElementById('decisionExplanation');
-
-            if (cost <= 0) {
-                alert("Cost must be greater than zero to calculate Benefit-Cost Ratio.");
-                return;
-            }
 
             const bcr = benefit / cost;
             const netValue = benefit - cost;
