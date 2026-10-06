@@ -31,7 +31,7 @@
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             touch-action: manipulation;
         }
-        /* Professional Yellow & White Variable Cards */
+        /* Professional Yellow, White, and Disabled Gray Variable Cards */
         .var-card-yellow {
             background-color: #fef9c3;
             color: #713f12;
@@ -40,6 +40,11 @@
         .var-card-white {
             background-color: #ffffff;
             color: #0f172a;
+            border: 1px solid #cbd5e1;
+        }
+        .var-card-disabled {
+            background-color: #e2e8f0;
+            color: #64748b;
             border: 1px solid #cbd5e1;
         }
     </style>
@@ -94,17 +99,17 @@
                     <div class="grid grid-cols-2 sm:grid-cols-7 gap-2 items-center text-center text-xs font-bold">
                         <!-- hW -->
                         <div class="var-card-yellow p-2 rounded-lg flex flex-col justify-between">
-                            <span class="text-[10px] opacity-80">Hours of worked in a period (h) </span>
+                            <span class="text-[10px] opacity-80">Hours worked in a period (h)</span>
                             <input type="text" id="hW_1" value="120" inputmode="decimal" placeholder="0"
-                                onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
+                                onkeydown="filterKeyPress(event)" oninput="syncHours(this)"
                                 class="w-full text-center bg-white/90 text-slate-900 rounded border border-yellow-400 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
                         </div>
                         <span class="text-slate-500 hidden sm:block">×</span>
                         <!-- alpha -->
                         <div class="var-card-yellow p-2 rounded-lg flex flex-col justify-between">
-                            <span class="text-[10px] opacity-80"> % of Time spent on skilled task </span>
+                            <span class="text-[10px] opacity-80">% of Time spent on skilled task</span>
                             <input type="text" id="alpha" value="0.5" inputmode="decimal" placeholder="0"
-                                onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
+                                onkeydown="filterKeyPress(event)" oninput="syncAlpha(this)"
                                 class="w-full text-center bg-white/90 text-slate-900 rounded border border-yellow-400 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
                         </div>
                         <span class="text-slate-500 hidden sm:block">×</span>
@@ -132,19 +137,18 @@
                 <div class="space-y-2">
                     <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">B. Unskilled Tasks Work Value</span>
                     <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 items-center text-center text-xs font-bold">
-                        <!-- hW -->
-                        <div class="var-card-yellow p-2 rounded-lg flex flex-col justify-between">
-                            <span class="text-[10px] opacity-80">Hours of worked in a period (h) </span>
-                            <input type="text" id="hW_2" value="120" inputmode="decimal" placeholder="0"
-                                onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
-                                class="w-full text-center bg-white/90 text-slate-900 rounded border border-yellow-400 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        <!-- hW Read-Only -->
+                        <div class="var-card-disabled p-2 rounded-lg flex flex-col justify-between opacity-80">
+                            <span class="text-[10px] opacity-80">Hours worked in a period (h)</span>
+                            <input type="text" id="hW_2" value="120" readonly
+                                class="w-full text-center bg-slate-300 text-slate-600 rounded border border-slate-400 font-bold py-1 mt-1 text-xs cursor-not-allowed focus:outline-none">
                         </div>
                         <span class="text-slate-500 hidden sm:block">×</span>
                         <!-- beta -->
                         <div class="var-card-yellow p-2 rounded-lg flex flex-col justify-between">
                             <span class="text-[10px] opacity-80">% of Time spent on unskilled task</span>
-                            <input type="text" id="beta" value="0.3" inputmode="decimal" placeholder="0"
-                                onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
+                            <input type="text" id="beta" value="0.5" inputmode="decimal" placeholder="0"
+                                onkeydown="filterKeyPress(event)" oninput="syncBeta(this)"
                                 class="w-full text-center bg-white/90 text-slate-900 rounded border border-yellow-400 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
                         </div>
                         <span class="text-slate-500 hidden sm:block">×</span>
@@ -191,17 +195,17 @@
                     <!-- (hT x ws) -->
                     <div class="border border-slate-700/80 p-2 rounded-lg bg-slate-900 grid grid-cols-3 gap-1 items-center">
                         <div class="var-card-yellow p-1.5 rounded">
-                            <span class="text-[9px] opacity-80 block">Hours of training (h) </span>
+                            <span class="text-[9px] opacity-80 block">Hours of training (h)</span>
                             <input type="text" id="hT" value="20" inputmode="decimal" placeholder="0"
                                 onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
                                 class="w-full text-center bg-white/90 text-slate-900 rounded font-bold py-0.5 mt-0.5 text-[11px] focus:ring-2 focus:ring-sky-500 focus:outline-none">
                         </div>
                         <span class="text-slate-400 text-xs">×</span>
                         <div class="var-card-white p-1.5 rounded">
-                            <span class="text-[9px] text-slate-600 block">Trainer wage per hour (RM) </span>
+                            <span class="text-[9px] text-slate-600 block">Trainer wage per hour (RM)</span>
                             <input type="text" id="ws_2" value="25" inputmode="decimal" placeholder="0"
                                 onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
-                                class="w-full text-center bg-slate-100 text-slate-900 rounded font-bold py-0.5 mt-0.5 text-[11px] focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                                class="w-full text-center bg-slate-100 text-slate-900 rounded border border-slate-300 font-bold py-0.5 mt-0.5 text-[11px] focus:ring-2 focus:ring-sky-500 focus:outline-none">
                         </div>
                     </div>
 
@@ -309,6 +313,52 @@
             el.value = (isNeg ? '-' : '') + val;
         }
 
+        // Sync hours worked from Skilled Task (A) to Unskilled Task (B)
+        function syncHours(el) {
+            sanitizeInput(el);
+            document.getElementById('hW_2').value = el.value;
+        }
+
+        // Sync alpha (skilled time fraction) and calculate beta (unskilled time fraction) = 1 - alpha
+        function syncAlpha(el) {
+            sanitizeInput(el);
+            let val = parseFloat(el.value);
+            if (isNaN(val)) {
+                document.getElementById('beta').value = '0';
+                return;
+            }
+            if (val > 1) {
+                val = 1;
+                el.value = '1';
+            }
+            if (val < 0) {
+                val = 0;
+                el.value = '0';
+            }
+            const betaVal = Math.max(0, 1 - val);
+            document.getElementById('beta').value = betaVal % 1 === 0 ? betaVal.toString() : parseFloat(betaVal.toFixed(4)).toString();
+        }
+
+        // Sync beta (unskilled time fraction) and calculate alpha (skilled time fraction) = 1 - beta
+        function syncBeta(el) {
+            sanitizeInput(el);
+            let val = parseFloat(el.value);
+            if (isNaN(val)) {
+                document.getElementById('alpha').value = '0';
+                return;
+            }
+            if (val > 1) {
+                val = 1;
+                el.value = '1';
+            }
+            if (val < 0) {
+                val = 0;
+                el.value = '0';
+            }
+            const alphaVal = Math.max(0, 1 - val);
+            document.getElementById('alpha').value = alphaVal % 1 === 0 ? alphaVal.toString() : parseFloat(alphaVal.toFixed(4)).toString();
+        }
+
         function getVal(id) {
             return parseFloat(document.getElementById(id).value) || 0;
         }
@@ -388,7 +438,7 @@
         function resetAll() {
             clearError();
 
-            const fields = ['hW_1', 'alpha', 'ws_1', 'gamma', 'hW_2', 'beta', 'wu', 'wE', 'hT', 'ws_2', 'cCost'];
+            const fields = ['hW_1', 'hW_2', 'alpha', 'beta', 'ws_1', 'gamma', 'wu', 'wE', 'hT', 'ws_2', 'cCost'];
             fields.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.value = '0';
