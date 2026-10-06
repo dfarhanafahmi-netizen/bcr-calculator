@@ -94,7 +94,7 @@
                     <div class="grid grid-cols-2 sm:grid-cols-7 gap-2 items-center text-center text-xs font-bold">
                         <!-- hW -->
                         <div class="var-card-yellow p-2 rounded-lg flex flex-col justify-between">
-                            <span class="text-[10px] opacity-80">Hours worked (h<sup>W</sup>)</span>
+                            <span class="text-[10px] opacity-80">Hours of worked in a period (h) </span>
                             <input type="text" id="hW_1" value="120" inputmode="decimal" placeholder="0"
                                 onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
                                 class="w-full text-center bg-white/90 text-slate-900 rounded border border-yellow-400 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -102,7 +102,7 @@
                         <span class="text-slate-500 hidden sm:block">×</span>
                         <!-- alpha -->
                         <div class="var-card-yellow p-2 rounded-lg flex flex-col justify-between">
-                            <span class="text-[10px] opacity-80">Fraction of time spent on skilled task (α)</span>
+                            <span class="text-[10px] opacity-80"> % of Time spent on skilled task </span>
                             <input type="text" id="alpha" value="0.5" inputmode="decimal" placeholder="0"
                                 onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
                                 class="w-full text-center bg-white/90 text-slate-900 rounded border border-yellow-400 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -110,7 +110,7 @@
                         <span class="text-slate-500 hidden sm:block">×</span>
                         <!-- ws -->
                         <div class="var-card-white p-2 rounded-lg flex flex-col justify-between">
-                            <span class="text-[10px] text-slate-600">Skilled wage (w<sub>s</sub>)</span>
+                            <span class="text-[10px] text-slate-600">Skilled wage per hour (RM)</span>
                             <input type="text" id="ws_1" value="25" inputmode="decimal" placeholder="0"
                                 onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
                                 class="w-full text-center bg-slate-100 text-slate-900 rounded border border-slate-300 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -118,7 +118,7 @@
                         <span class="text-slate-500 hidden sm:block">×</span>
                         <!-- gamma -->
                         <div class="var-card-yellow p-2 rounded-lg flex flex-col justify-between">
-                            <span class="text-[10px] opacity-80">Productivity (γ)</span>
+                            <span class="text-[10px] opacity-80">Productivity</span>
                             <input type="text" id="gamma" value="0.7" inputmode="decimal" placeholder="0"
                                 onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
                                 class="w-full text-center bg-white/90 text-slate-900 rounded border border-yellow-400 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -134,7 +134,7 @@
                     <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 items-center text-center text-xs font-bold">
                         <!-- hW -->
                         <div class="var-card-yellow p-2 rounded-lg flex flex-col justify-between">
-                            <span class="text-[10px] opacity-80">Hours worked (h<sup>W</sup>)</span>
+                            <span class="text-[10px] opacity-80">Hours of worked in a period (h) </span>
                             <input type="text" id="hW_2" value="120" inputmode="decimal" placeholder="0"
                                 onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
                                 class="w-full text-center bg-white/90 text-slate-900 rounded border border-yellow-400 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -142,7 +142,7 @@
                         <span class="text-slate-500 hidden sm:block">×</span>
                         <!-- beta -->
                         <div class="var-card-yellow p-2 rounded-lg flex flex-col justify-between">
-                            <span class="text-[10px] opacity-80">Fraction of time spent on unskilled task (β)</span>
+                            <span class="text-[10px] opacity-80">% of Time spent on unskilled task</span>
                             <input type="text" id="beta" value="0.3" inputmode="decimal" placeholder="0"
                                 onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
                                 class="w-full text-center bg-white/90 text-slate-900 rounded border border-yellow-400 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -150,7 +150,7 @@
                         <span class="text-slate-500 hidden sm:block">×</span>
                         <!-- wu -->
                         <div class="var-card-white p-2 rounded-lg flex flex-col justify-between">
-                            <span class="text-[10px] text-slate-600">Unskilled wage (w<sub>u</sub>)</span>
+                            <span class="text-[10px] text-slate-600">Unskilled wage (RM)</span>
                             <input type="text" id="wu" value="10" inputmode="decimal" placeholder="0"
                                 onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
                                 class="w-full text-center bg-slate-100 text-slate-900 rounded border border-slate-300 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -180,7 +180,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-5 gap-2 items-center text-center text-xs font-bold">
                     <!-- wE -->
                     <div class="var-card-yellow p-2 rounded-lg flex flex-col justify-between">
-                        <span class="text-[10px] opacity-80">Apprentice wage (w<sub>E</sub>)</span>
+                        <span class="text-[10px] opacity-80">Apprentice wage in a period (RM)</span>
                         <input type="text" id="wE" value="1200" inputmode="decimal" placeholder="0"
                             onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
                             class="w-full text-center bg-white/90 text-slate-900 rounded border border-yellow-400 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -191,14 +191,14 @@
                     <!-- (hT x ws) -->
                     <div class="border border-slate-700/80 p-2 rounded-lg bg-slate-900 grid grid-cols-3 gap-1 items-center">
                         <div class="var-card-yellow p-1.5 rounded">
-                            <span class="text-[9px] opacity-80 block">Hours (h<sup>T</sup>)</span>
+                            <span class="text-[9px] opacity-80 block">Hours of training (h) </span>
                             <input type="text" id="hT" value="20" inputmode="decimal" placeholder="0"
                                 onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
                                 class="w-full text-center bg-white/90 text-slate-900 rounded font-bold py-0.5 mt-0.5 text-[11px] focus:ring-2 focus:ring-sky-500 focus:outline-none">
                         </div>
                         <span class="text-slate-400 text-xs">×</span>
                         <div class="var-card-white p-1.5 rounded">
-                            <span class="text-[9px] text-slate-600 block">Wage (w<sub>s</sub>)</span>
+                            <span class="text-[9px] text-slate-600 block">Trainer wage per hour (RM) </span>
                             <input type="text" id="ws_2" value="25" inputmode="decimal" placeholder="0"
                                 onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
                                 class="w-full text-center bg-slate-100 text-slate-900 rounded font-bold py-0.5 mt-0.5 text-[11px] focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -209,7 +209,7 @@
 
                     <!-- c -->
                     <div class="var-card-yellow p-2 rounded-lg flex flex-col justify-between">
-                        <span class="text-[10px] opacity-80">Other training cost (c)</span>
+                        <span class="text-[10px] opacity-80">Other training cost (RM)</span>
                         <input type="text" id="cCost" value="300" inputmode="decimal" placeholder="0"
                             onkeydown="filterKeyPress(event)" oninput="sanitizeInput(this)"
                             class="w-full text-center bg-white/90 text-slate-900 rounded border border-yellow-400 font-bold py-1 mt-1 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
